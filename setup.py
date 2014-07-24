@@ -21,6 +21,9 @@ def readme():
     with open('README.md', 'r') as ip:
         return ip.read()
 
+package_dir = {
+    "": "src"
+}
 setup(
     name='impyla',
     version='0.9.0-dev',
@@ -29,7 +32,8 @@ setup(
     author='Uri Laserson',
     author_email='laserson@cloudera.com',
     url='https://github.com/cloudera/impyla',
-    packages=['impala', 'impala.cli_service', 'impala.tests'],
+    packages=['impala', 'impala.cli_service', 'impala.tests', 'ImpalaService'],
+    package_dir=package_dir,
     install_requires=['thrift'],
     keywords=('cloudera impala python hadoop sql hdfs mpp madlib spark'
             'distributed db api pep 249'),
