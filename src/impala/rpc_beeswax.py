@@ -48,7 +48,8 @@ _TIMESTAMP_PATTERN = re.compile(r'(\d+-\d+-\d+ \d+:\d+:\d+(\.\d{,6})?)')
 TYPE_MAP = {
     'int': int,
     'bigint': long,
-    'float': float
+    'float': float,
+    'string': unicode
 }
 
 def _parse_timestamp(value):
@@ -186,15 +187,23 @@ def fetch_results(service, query_handle, schema=None, max_rows=100):
 
     response = service.fetch(query_handle, False, max_rows)
     rows = []
-    types = [TYPE_MAP.get(row[1]) for row in schema]
+    types = []
+  
+    for row in schema: 
+        type_mapping = TYPE_MAP.get(row[1])
+        if not type_mapping:
+            print "Type {} not recognized, defaulting to unicode".format(row[1])
+            type_mapping = unicode
+        types.append(type_mapping)
+ 
     for trow in response.data:
         row_data = trow.split('\t')
         row = []
         for (i, col_val) in enumerate(row_data):
             type_ = schema[i][1]
             #type_converter = TYPE_MAP.get(type_, unicode)
-            #value = type_converter(col_val)
-            value = col_val
+            type_converter = types[i]
+            value = type_converter(col_val)
             
             #if type_ == 'TIMESTAMP_TYPE':
             #    value = _parse_timestamp(value)
