@@ -2,8 +2,8 @@
 
 IMPYLA_REPO=`pwd`
 OUTPUT=$IMPYLA_REPO/impala/thrift
-ARGS="-gen py:new_style -out $OUTPUT"
-ARGS="-gen py:new_style"
+#ARGS="-gen py:new_style -out $OUTPUT"
+ARGS="-gen py:new_style -out src -r"
 
 # generate the python code
 thrift $ARGS $IMPYLA_REPO/thrift/Data.thrift
@@ -24,3 +24,4 @@ thrift $ARGS $IMPYLA_REPO/thrift/Types.thrift
 thrift $ARGS $IMPYLA_REPO/thrift/beeswax.thrift
 thrift $ARGS $IMPYLA_REPO/thrift/cli_service.thrift
 thrift $ARGS $IMPYLA_REPO/thrift/parquet.thrift
+thrift $ARGS $IMPYLA_REPO/thrift/hive_metastore.thrift
