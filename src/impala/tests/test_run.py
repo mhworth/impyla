@@ -21,7 +21,7 @@ def test_rpc():
 
 
 def test_dbapi():
-    connection = connect(port=21000)
+    connection = connect(port=21000, rpc_impl='hs1')
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM deepfield_drill_small_step300.drill_small_2014_07_14t14_30 LIMIT 10')
     print cursor.fetchall()
