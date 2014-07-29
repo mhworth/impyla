@@ -52,6 +52,15 @@ TYPE_MAP = {
     'string': unicode
 }
 
+class BeeswaxSession(object):
+    '''
+    A placeholder class for representing a beeswax session
+    '''
+    def __init__(self, service, user, configuration):
+        self.service = service
+        self.user = user
+        self.configuration = configuration
+
 def _parse_timestamp(value):
     if value:
         match = _TIMESTAMP_PATTERN.match(value)
@@ -165,8 +174,8 @@ def create_beeswax_query(query_str, user):
     return query
 
 @retry
-def execute_statement(service, statement, user):
-    query = create_beeswax_query(statement, user=user)
+def execute_statement(service, session_handle, statement):
+    query = create_beeswax_query(statement, user=session_handle.user)
     query_handle = service.query(query)
     return query_handle
 
@@ -213,6 +222,12 @@ def fetch_results(service, query_handle, schema=None, max_rows=100):
         rows.append(tuple(row))
 
     return rows
+
+def open_session(service, user, configuration=None):
+    return BeeswaxSession(service=service, user=user, configuration=configuration)
+
+def close_session(service, session_handle):
+    pass
 
 @retry
 def get_current_database(service, session_handle):
@@ -290,40 +305,33 @@ def get_functions(service, session_handle, database_name='.*'):
 
 @retry
 def get_operation_status(service, operation_handle):
-    req = TGetOperationStatusReq(operationHandle=operation_handle)
-    resp = service.GetOperationStatus(req)
-    err_if_rpc_not_ok(resp)
-    return TOperationState._VALUES_TO_NAMES[resp.operationState]
+    state = service.get_state(operation_handle)
+    names_to_values = QueryState._NAMES_TO_VALUES
+    values_to_names = QueryState._VALUES_TO_NAMES
+    if state == names_to_values['INITIALIZED']:
+        return 'INITIALIZED_STATE'
+    elif state == names_to_values['RUNNING']:
+        return 'RUNNING_STATE'
+    else:
+        return values_to_names[state]
 
 @retry
 def cancel_operation(service, operation_handle):
-    req = TCancelOperationReq(operationHandle=operation_handle)
-    resp = service.CancelOperation(req)
-    err_if_rpc_not_ok(resp)
+    resp = service.Cancel(req)
+    return resp
 
 @retry
 def close_operation(service, operation_handle):
-    req = TCloseOperationReq(operationHandle=operation_handle)
-    resp = service.CloseOperation(req)
-    err_if_rpc_not_ok(resp)
+    return service.close(operation_handle)
 
 @retry
 def get_log(service, operation_handle):
-    req = TGetLogReq(operationHandle=operation_handle)
-    resp = service.GetLog(req)
-    err_if_rpc_not_ok(resp)
-    return resp.log
+    return 'Log not supported'
 
 def ping(service, session_handle):
-    req = TGetInfoReq(sessionHandle=session_handle,
-                      infoType=TGetInfoType.CLI_SERVER_NAME)
     try:
-        resp = service.GetInfo(req)
+        resp = service.echo('ping')
     except TTransportException as e:
         return False
 
-    try:
-        err_if_rpc_not_ok(resp)
-    except HS2Error as e:
-        return False
     return True

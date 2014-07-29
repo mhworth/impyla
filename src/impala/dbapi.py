@@ -19,11 +19,13 @@ import time
 import datetime
 
 from . import rpc
+from . import rpc_beeswax as rpc
 from impala.cli_service.ttypes import TTypeId
 from impala.error import (Error, Warning, InterfaceError, DatabaseError,
                           InternalError, OperationalError, ProgrammingError,
                           IntegrityError, DataError, NotSupportedError)
 
+from beeswaxd.ttypes import QueryHandle
 
 # PEP 249 module globals
 apilevel = '2.0'
@@ -136,8 +138,13 @@ class Cursor(object):
 
     @property
     def has_result_set(self):
-        return (self._last_operation_handle is not None and
-                self._last_operation_handle.hasResultSet)
+        if self._last_operation_handle is None:
+            return False
+        elif hasattr(self._last_operation_handle, 'hasResultSet'):
+            return self._last_operation_handle.hasResultSet
+        elif isinstance(self._last_operation_handle, QueryHandle):
+            return True
+        return False
 
     def close(self):
         # PEP 249
