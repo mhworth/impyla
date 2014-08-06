@@ -24,6 +24,36 @@ def readme():
 package_dir = {
     "": "src"
 }
+
+CatalogObjects
+CatalogService
+Data
+DataSinks
+Descriptors
+ExecStats
+Exprs
+ExternalDataSource
+Frontend
+ImpalaInternalService
+ImpalaService
+JniCatalog
+Llama
+NetworkTest
+Partitions
+PlanNodes
+Planner
+RuntimeProfile
+StatestoreService
+Status
+Types
+__init__.py
+beeswaxd
+cli_service
+fb303
+hive_metastore
+impala
+impyla.egg-info
+parquet
 setup(
     name='impyla',
     version='0.9.0-dev',
@@ -32,7 +62,7 @@ setup(
     author='Uri Laserson',
     author_email='laserson@cloudera.com',
     url='https://github.com/cloudera/impyla',
-    packages=['impala', 'impala.cli_service', 'impala.tests', 'ImpalaService'],
+    packages=['impala', 'impala.cli_service', 'impala.tests', 'ImpalaService', 'beeswaxd', 'fb303'],
     package_dir=package_dir,
     install_requires=['thrift'],
     keywords=('cloudera impala python hadoop sql hdfs mpp madlib spark'
