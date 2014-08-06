@@ -25,35 +25,6 @@ package_dir = {
     "": "src"
 }
 
-CatalogObjects
-CatalogService
-Data
-DataSinks
-Descriptors
-ExecStats
-Exprs
-ExternalDataSource
-Frontend
-ImpalaInternalService
-ImpalaService
-JniCatalog
-Llama
-NetworkTest
-Partitions
-PlanNodes
-Planner
-RuntimeProfile
-StatestoreService
-Status
-Types
-__init__.py
-beeswaxd
-cli_service
-fb303
-hive_metastore
-impala
-impyla.egg-info
-parquet
 setup(
     name='impyla',
     version='0.9.0-dev',
